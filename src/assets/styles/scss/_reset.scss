@@ -3,6 +3,12 @@ body {
   padding: 0;
 }
 
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
 .btn {
   background-color: transparent;
   border:0;
