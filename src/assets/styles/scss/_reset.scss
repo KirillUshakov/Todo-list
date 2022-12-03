@@ -10,11 +10,13 @@ body {
 }
 
 .btn {
+  cursor: pointer;
   background-color: transparent;
   border:0;
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
+  color: inherit;
 }
 
 .list {

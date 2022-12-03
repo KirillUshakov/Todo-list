@@ -104,3 +104,91 @@ body {
   border-radius: 7px;
   background-color: var(--content-color);
 }
+
+input[type="text"] {
+  padding: 7px 15px;
+  border:0;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  color: inherit;
+
+  transition: all .3s;
+
+  &::placeholder {
+    opacity: 0.6;
+    color: currentColor;
+  }
+
+  &:hover,
+  &:focus {
+    outline: 0;
+    opacity: 0.8;
+  }
+}
+
+.selector {
+  position: relative;
+  // .selector__btn
+
+  &__btn {
+    font-weight: 500;
+    font-size: 18px;
+    transition: all .3s;
+
+    &:hover,
+    &:focus {
+     opacity: 0.8;
+    }
+  }
+
+  // .selector__list
+
+  &__list {
+    position: absolute;
+    right: 0;
+    bottom: -10px;
+
+    min-width: 100%;
+
+    display: none;
+    flex-direction: column;
+
+    color: var(--content-color-alt);
+
+    background-color: var(--content-color);
+    box-shadow: 0 0 5px rgba($color: $black, $alpha: 0.25);
+    border-radius: 7px;
+
+    transform: translateY(100%);
+    z-index: 10;
+
+    &.active {
+      display: flex;
+    }
+  }
+
+  // .selector__list-btn
+
+  &__list-btn {
+    width: 100%;
+
+    padding: 17px 25px;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    border-bottom: 1px solid #eaeaea;
+    transition: all .3s;
+
+    &:last-child {
+      border-color: transparent;
+    }
+
+    &:hover,
+    &:focus {
+      opacity: 0.7;
+    }
+  }
+}
