@@ -13,11 +13,11 @@ const routes = [
     children: [
       {
         path: "",
-        component: () => import("../views/TodoListView.vue"),
+        component: () => import("../views/ListView.vue"),
       },
       {
         path: ":id",
-        component: () => import("../views/TodoListView.vue"),
+        component: () => import("../views/ListView.vue"),
       },
     ],
   },
