@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <div class="app-theme light-theme">
+    <router-view />
+  </div>
 </template>
 
 <style lang="scss">

@@ -1,0 +1,24 @@
+$white: #fff;
+$black: #4F4F4F;
+$grey: #A7A7A7;
+$background: $white;
+
+:root,
+html {
+  --content-color: #4F4F4F;
+  --content-color-alt: #fff;
+}
+
+.light-theme {
+  --content-color: #4F4F4F;
+  --content-color-alt: #fff;
+}
+
+.dark-theme {
+  --content-color: #fff;
+  --content-color-alt: #4F4F4F;
+}
+
+.section {
+  color: var(--content-color);
+}
