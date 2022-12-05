@@ -12,20 +12,20 @@
         <input type="text" class="input-text" placeholder="Some additional description">
       </label>
     </div>
-    <div class="settings-row">
+    <div class="settings-row settings-row--row-grid">
       <div class="label label--colors">
         <p>Colors</p>
         <div class="input-group">
           <input type="color" class="input-color">
           <input type="color" class="input-color">
-          <button class="btn d-btn colors-btn">
+          <button class="btn d-block colors-btn">
             Random colors
           </button>
         </div>
       </div>
       <label class="label label--icon">
         <p>Icon</p>
-        <div class="selector">
+        <div class="selector icon-selector">
           <div class="selector__value">
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clip-path="url(#clip0_1_36)">
@@ -40,13 +40,13 @@
               </defs>
             </svg>
           </div>
-          <div class="selector__btn">
+          <div class="selector__btn btn">
             <svg width="26" height="14" viewBox="0 0 26 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 12L11.991 13.1099C12.5631 13.63 13.4369 13.63 14.009 13.1099L13 12ZM25.009 3.10991C25.622 2.55265 25.6672 1.60398 25.1099 0.990991C24.5526 0.378004 23.604 0.332829 22.991 0.89009L25.009 3.10991ZM3.00901 0.89009C2.39602 0.332829 1.44735 0.378004 0.89009 0.990991C0.332829 1.60398 0.378004 2.55265 0.990991 3.10991L3.00901 0.89009ZM14.009 13.1099L25.009 3.10991L22.991 0.89009L11.991 10.8901L14.009 13.1099ZM14.009 10.8901L3.00901 0.89009L0.990991 3.10991L11.991 13.1099L14.009 10.8901Z" fill="white"/>
             </svg>
           </div>
-          <div class="selector__list">
-            <button class="selector__list-btn" v-for="icon in 10" :key="icon">
+          <div class="selector__list selector__list--icon-select selector__list--row-grid">
+            <button class="selector__list-btn btn" v-for="icon in 10" :key="icon">
               <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1_36)">
                 <path d="M22 23C23.1046 23 24 22.1046 24 21C24 19.8954 23.1046 19 22 19C20.8954 19 20 19.8954 20 21C20 22.1046 20.8954 23 22 23Z" fill="white"/>
@@ -66,3 +66,131 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.settings {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-row {
+  width: 100%;
+  margin-bottom: 45px;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 50px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &--row-grid {
+    & > * {
+      width: auto !important;
+      flex: 0 1 auto;
+    }
+  }
+}
+
+.label {
+  width: 100%;
+
+  & > p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .input-text {
+    width: 100%;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  &--name {
+    font-size: 36px;
+    font-weight: bold;
+  }
+
+  &--description {
+    font-size: 24px;
+  }
+
+  &--colors {
+    @media (min-width: 768px) {
+      min-width: 450px;
+    }
+  }
+}
+
+.input-group {
+  width: 100%;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.input-color {
+  position: relative;
+  cursor: pointer;
+
+  padding: 0px 2px;
+  margin: 0;
+  border:0;
+
+  width: 100%;
+  max-width: 95px;
+  height: 41px;
+
+  overflow: hidden;
+  background-color: var(--content-color);
+  border: 0;
+  border-radius: 7px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    top: 1px;
+
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+
+    background-color: transparent;
+    border-radius: 9px;
+    border: 4px solid #ffffff;
+  }
+}
+
+.colors-btn {
+  cursor: pointer;
+
+  padding-left: 50px;
+  padding-right: 50px;
+
+  transition: .3s;
+
+  &:hover,
+  &:focus {
+   opacity: 0.7;
+  }
+}
+
+.icon-selector {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  .selector {
+    &__list {
+      width: 100vw;
+      max-width: 267px;
+    }
+  }
+}
+
+</style>
