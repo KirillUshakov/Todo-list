@@ -8,18 +8,27 @@
             <path d="M23 23L29 29" stroke="white" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </button>
-        <input type="text" class="input-text" placeholder="Searh something...">
+        <input
+          v-model="searchValue"
+          class="input-text"
+          placeholder="Searh something..."
+          type="text"
+        >
       </div>
       <div class="sort-container">
         <span>Sort by</span>
         <div class="selector">
-          <button type="button" class="selector__btn d-block btn">Date</button>
+          <button type="button" class="selector__btn d-block btn">{{ capitalize(filterBy) }}</button>
           <div class="selector__list">
-            <button class="btn selector__list-btn" disabled>Date</button>
-            <button class="btn selector__list-btn">Name</button>
+            <button @click="filterBy.value = 'date'" class="btn selector__list-btn">Date</button>
+            <button @click="filterBy.value = 'name'" class="btn selector__list-btn">Name</button>
           </div>
         </div>
-        <button class="btn sort-direction">
+        <button
+          @click="sortTasks"
+          :class="{ 'increace' : !sortByDecrease }"
+          class="btn sort-direction"
+        >
           <svg width="26" height="14" viewBox="0 0 26 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M13 12L11.991 13.1099C12.5631 13.63 13.4369 13.63 14.009 13.1099L13 12ZM25.009 3.10991C25.622 2.55265 25.6672 1.60398 25.1099 0.990991C24.5526 0.378004 23.604 0.332829 22.991 0.89009L25.009 3.10991ZM3.00901 0.89009C2.39602 0.332829 1.44735 0.378004 0.89009 0.990991C0.332829 1.60398 0.378004 2.55265 0.990991 3.10991L3.00901 0.89009ZM14.009 13.1099L25.009 3.10991L22.991 0.89009L11.991 10.8901L14.009 13.1099ZM14.009 10.8901L3.00901 0.89009L0.990991 3.10991L11.991 13.1099L14.009 10.8901Z" fill="white"/>
           </svg>
@@ -28,11 +37,20 @@
     </div>
 
     <div class="todo-list-container">
-      <div class="todo-list">
+
+      <div v-if="activeTasks.length" class="todo-list">
+        <div class="todo-list__header">
+         Active <span>{{ activeTasks.length }}</span> {{ searchValue ? '(Searched)' : '' }}
+        </div>
+
         <div class="todo-list__body">
-          <div class="add-item">
+          <div v-if="!searchValue" class="add-item" :class="addItemClasses">
             <div class="add-item__action">
-              <button type="button" class="btn round-btn add-item__add-btn">
+              <button
+                @click="addTask"
+                class="btn round-btn add-item__add-btn"
+                type="button"
+              >
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M2 12.8399H23.6667" stroke="#4F4F4F" stroke-width="3" stroke-linecap="round"/>
                   <path d="M12.8398 23.6667L12.8398 2.00001" stroke="#4F4F4F" stroke-width="3" stroke-linecap="round"/>
@@ -41,20 +59,42 @@
             </div>
 
             <div class="add-item__content d-block">
-              <input type="text" class="add-item__input" placeholder="Type your task">
+              <input
+                v-model="newTaskName"
+                @keydown.enter="addTask"
+                class="add-item__input"
+                placeholder="Type your task"
+                type="text"
+              >
             </div>
           </div>
-          <list-item v-for="item in 2" :key="item"/>
+          <list-item
+            v-for="item in activeTasks"
+            :key="item.id"
+            :item="item"
+            @delete="deleteTask"
+          />
         </div>
       </div>
 
-      <div class="todo-list completed">
+      <div v-if="completedTasks.length" class="todo-list completed">
         <div class="todo-list__header">
-          Completed <span>1</span>
+          Completed <span>{{ completedTasks.length }}</span> {{ searchValue ? '(Searched)' : '' }}
         </div>
 
         <div class="todo-list__body">
-          <list-item/>
+          <list-item
+            v-for="item in completedTasks"
+            :key="item.id"
+            :item="item"
+            @delete="deleteTask"
+          />
+        </div>
+      </div>
+
+      <div v-if="!activeTasks.length && !completedTasks.length" class="todo-list">
+        <div class="todo-list__header todo-list__header--clear" style="font-weight: 400;">
+          Sorry, nothing found with your request  <b>"{{ searchValue }}"</b>
         </div>
       </div>
     </div>
@@ -63,6 +103,127 @@
 
 <script setup>
 import ListItem from "@/components/todo-list/ListItem.vue";
+import { computed, onMounted, reactive, ref, watch } from "@vue/runtime-core";
+
+const props = defineProps({
+  instanceList: {
+    type: Object,
+    required: true,
+  }
+});
+
+const capitalize = str => str?.charAt(0).toUpperCase() + str?.slice(1);
+
+let list = reactive(props.instanceList);
+let filterBy = ref('name');
+let sortByDecrease = ref(true);
+let searchValue = ref('');
+const activeTasks = computed(() => list?.todolist?.filter((item) => !item.done));
+const completedTasks = computed(() => list?.todolist?.filter((item) => item.done));
+
+// Filter
+// const filterTasks = (todolist) => {
+//   let result = todolist;
+
+//   // Search filter
+//   if (searchValue.value) {
+//     result = result.filter(item => item.name?.toLowerCase().startsWith(searchValue.value));
+//   }
+
+//   // Sort filter
+//   result = result.sort((a, b) => {
+//     switch (filterBy.value) {
+//       case 'date':
+//         return b.id - a.id;
+
+//       default:
+//         if (a.name > b.name) return 1;
+//         if (a.name < b.name) return -1;
+//         return 0;
+//     }
+//   });
+
+
+//   if (!sortByDecrease.value) {
+//     result = result.reverse();
+//   }
+
+//   return result;
+// }
+
+// Search / Filter / Sort
+let tempTodoList = reactive({});
+
+watch(searchValue, (val, prevVal) => {
+  console.log(val, prevVal);
+  if (!val) {
+    list.todolist = tempTodoList;
+    return;
+  }
+
+  if (!prevVal) {
+    tempTodoList = list.todolist;
+  }
+
+  filterTasks();
+});
+
+const filterTasks = () => {
+  list.todolist = list.todolist.filter(item => item.name?.toLowerCase().startsWith(searchValue.value.toLowerCase()))
+}
+
+const sortTasks = () => {
+  let result = list.todolist;
+  sortByDecrease.value = !sortByDecrease.value;
+
+  // Sort filter
+  result = result.sort((a, b) => {
+    switch (filterBy.value) {
+      case 'date':
+        return b.id - a.id;
+
+      default:
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+    }
+  });
+
+  if (!sortByDecrease.value) {
+    result = result.reverse();
+  }
+
+  list.todolist = result;
+}
+
+// Add task input
+let newTaskName = ref('');
+const addItemClasses = reactive([]);
+const addTask = () => {
+  if (!newTaskName || !list?.todolist) return;
+
+  list.todolist.unshift({
+    id: +new Date(),
+    name: newTaskName,
+    done: false,
+  });
+
+  newTaskName = '';
+}
+
+// Delete task
+const deleteTask = (id) => {
+  const index = list?.todolist?.findIndex(el => Number(el.id) === Number(id));
+
+  if (index === undefined || index === -1) return;
+
+  list.todolist.splice(index, 1);
+}
+
+onMounted(() => {
+  list = props.instanceList
+});
+
 </script>
 
 <style lang="scss" scopped>
@@ -107,10 +268,6 @@ import ListItem from "@/components/todo-list/ListItem.vue";
      opacity: 1;
     }
   }
-
-  .input-text {
-
-  }
 }
 
 .sort-container {
@@ -147,7 +304,7 @@ import ListItem from "@/components/todo-list/ListItem.vue";
    opacity: 0.7;
   }
 
-  &.ascending {
+  &.increace {
     transform: rotate(180deg);
   }
 }
@@ -193,6 +350,10 @@ import ListItem from "@/components/todo-list/ListItem.vue";
 
       border-radius: 50%;
       background-color: var(--content-color);
+    }
+
+    &--clear {
+      border-bottom: 0;
     }
   }
 
